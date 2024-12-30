@@ -19,7 +19,10 @@ const generateTokens = async (userId) => {
 
     return { accessToken, refreshToken };
   } catch (err) {
-    throw new ApiError(500, "Error occured in generating tokens");
+    throw new ApiError(
+      500,
+      err?.message || "Error occured in generating tokens"
+    );
   }
 };
 
@@ -51,7 +54,7 @@ export const login = asyncHandler(async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new ApiError(404, "User does not exit");
+    throw new ApiError(404, "This email is not registered");
   }
 
   const isPassValid = await user.isPasswordCorrect(password);
@@ -71,28 +74,15 @@ export const login = asyncHandler(async (req, res) => {
 });
 
 export const logout = asyncHandler(async (req, res) => {
-  const incomingRefreshToken =
-    req.cookies.refreshToken || req.body.refreshToken;
-
-  if (!incomingRefreshToken) {
-    throw new ApiError(401, "Unauthorized request");
-  }
-
   try {
-    const decodedToken = jwt.verify(
-      incomingRefreshToken,
-      process.env.REFRESH_TOKEN_SECRET
-    );
-
-    const userId = decodedToken?._id;
-
-    const userRefToken = await redis.get(`refreshToken:${userId}`);
-
-    if (incomingRefreshToken !== userRefToken) {
-      throw new ApiError(401, "Refresh token is expired");
-    }
-
+    const userId = req?.user._id;
     const user = await User.findById(userId);
+    if (!user) {
+      throw new ApiError(
+        401,
+        "Unauthorised request - this action requires login"
+      );
+    }
 
     await redis.del(`refreshToken:${userId}`);
 
@@ -101,8 +91,8 @@ export const logout = asyncHandler(async (req, res) => {
       .clearCookie("accessToken", options)
       .clearCookie("refreshToken", options)
       .json(new ApiResponse(200, { user }, "Logout successful!"));
-  } catch (error) {
-    throw new ApiError(500, "Server error while logging out");
+  } catch (err) {
+    throw new ApiError(500, err?.message || "Server error while logging out");
   }
 });
 
