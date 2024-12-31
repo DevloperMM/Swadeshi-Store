@@ -31,7 +31,7 @@ export const authProtect = asyncHandler(async (req, res, next) => {
 });
 
 export const adminProtect = asyncHandler(async (req, res, next) => {
-  if (req.user && req.user.role === "admin ") {
+  if (req.user && req.user.role === "admin") {
     next();
   } else {
     throw new ApiError(403, "Access denied! only ADMIN can access");
