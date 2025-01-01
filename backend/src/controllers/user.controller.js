@@ -36,11 +36,13 @@ export const signup = asyncHandler(async (req, res) => {
 
   const user = await User.create({ name, email, password });
   if (!user) {
-    throw new ApiError(500, "Try registering again in a moment");
+    throw new ApiError(500, "Try registering in a moment again");
   }
 
   const { accessToken, refreshToken } = await generateTokens(user._id);
-  await redis.set(`refreshToken:${user._id}`, refreshToken);
+  await redis.set(`refreshToken:${user._id}`, refreshToken, {
+    ex: 7 * 24 * 60 * 60,
+  });
 
   return res
     .status(200)
@@ -64,7 +66,9 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   const { accessToken, refreshToken } = await generateTokens(user._id);
-  await redis.set(`refreshToken:${user._id}`, refreshToken);
+  await redis.set(`refreshToken:${user._id}`, refreshToken, {
+    ex: 7 * 24 * 60 * 60,
+  });
 
   return res
     .status(200)
@@ -92,7 +96,10 @@ export const logout = asyncHandler(async (req, res) => {
       .clearCookie("refreshToken", options)
       .json(new ApiResponse(200, { user }, "Logout successful!"));
   } catch (err) {
-    throw new ApiError(500, err?.message || "Server error while logging out");
+    throw new ApiError(
+      500,
+      err?.message || "Try logging out in a moment again"
+    );
   }
 });
 
@@ -131,6 +138,9 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
         )
       );
   } catch (err) {
-    throw new ApiError(401, err?.message || "Invalid Refresh Token");
+    throw new ApiError(
+      500,
+      err?.message || "Try refreshing the token in a moment again"
+    );
   }
 });

@@ -8,8 +8,8 @@ import {
   getRecommendedProducts,
   toggleFeatured,
 } from "../controllers/product.controller.js";
-import { adminProtect, authProtect } from "../middleware/auth.middleware.js";
-import { upload } from "../middleware/multer.middleware.js";
+import { adminProtect, authProtect } from "../middlewares/auth.middleware.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
 

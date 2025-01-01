@@ -5,7 +5,7 @@ import {
   logout,
   refreshAccessToken,
 } from "../controllers/user.controller.js";
-import { authProtect } from "../middleware/auth.middleware.js";
+import { authProtect } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
