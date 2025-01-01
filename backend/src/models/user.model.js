@@ -22,6 +22,7 @@ const userSchema = new mongoose.Schema(
     },
     cartItems: [
       {
+        _id: false,
         quantity: { type: Number, default: 1 },
         product: {
           type: mongoose.Schema.Types.ObjectId,
