@@ -60,7 +60,6 @@ export const addItemToCart = asyncHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, response, "Item added to cart successfully"));
   } catch (err) {
-    console.log(err);
     throw new ApiError(
       500,
       err?.message || "Try adding item to cart in a moment again"
