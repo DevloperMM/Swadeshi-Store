@@ -1,3 +1,5 @@
 .env
 node_modules
 notes.json
+frontend/node_modules
+frontend/.env
