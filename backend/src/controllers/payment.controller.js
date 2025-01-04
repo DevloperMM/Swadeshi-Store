@@ -1,8 +1,8 @@
 import crypto from "crypto";
 import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import Coupon from "../models/coupon.model.js";
-import Order from "../models/order.model.js";
+import { Coupon } from "../models/coupon.model.js";
+import { Order } from "../models/order.model.js";
 import rzp from "../lib/razorpay.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 

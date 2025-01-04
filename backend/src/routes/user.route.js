@@ -4,16 +4,18 @@ import {
   login,
   logout,
   refreshAccessToken,
+  getProfile,
 } from "../controllers/user.controller.js";
 import { authProtect } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/signup").post(signup);
-router.route("/login").post(login);
-router.route("/refresh-token").post(refreshAccessToken);
+router.post("/signup", signup);
+router.post("/login", login);
+router.post("/refresh-token", refreshAccessToken);
 
 //secured routes
-router.route("/logout").post(authProtect, logout);
+router.post("/logout", authProtect, logout);
+router.get("/profile", authProtect, getProfile);
 
 export default router;

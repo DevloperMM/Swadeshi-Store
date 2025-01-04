@@ -1,4 +1,4 @@
-import Product from "../models/product.model.js";
+import { Product } from "../models/product.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
@@ -186,7 +186,14 @@ export const getProductsByCategory = asyncHandler(async (req, res) => {
 });
 
 export const getRecommendedProducts = asyncHandler(async (req, res) => {
-  // TODO: Build this with AI and LLMs
+  // TODO = {
+  //   task: "Use LLMs to generate recommendations for users"
+  //   ways: {
+  //     1: "Use cart products, past orders to recommend products",
+  //     2: "Randomly generate if both are not available",;
+  //   }
+  // };
+
   return res
     .status(200)
     .json(new ApiResponse(200, null, "This page is under maintenance"));

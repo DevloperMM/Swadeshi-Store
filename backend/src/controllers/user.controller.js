@@ -41,7 +41,7 @@ export const signup = asyncHandler(async (req, res) => {
 
   const { accessToken, refreshToken } = await generateTokens(user._id);
   await redis.set(`refreshToken:${user._id}`, refreshToken, {
-    ex: 7 * 24 * 60 * 60,
+    ex: eval(process.env.REFRESH_TOKEN_EXPIRY),
   });
 
   return res
@@ -67,7 +67,7 @@ export const login = asyncHandler(async (req, res) => {
 
   const { accessToken, refreshToken } = await generateTokens(user._id);
   await redis.set(`refreshToken:${user._id}`, refreshToken, {
-    ex: 7 * 24 * 60 * 60,
+    ex: eval(process.env.REFRESH_TOKEN_EXPIRY),
   });
 
   return res
@@ -142,5 +142,15 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
       500,
       err?.message || "Try refreshing the token in a moment again"
     );
+  }
+});
+
+export const getProfile = asyncHandler(async (req, res) => {
+  try {
+    return res
+      .status(200)
+      .json(new ApiResponse(200, { user: req.user }, "User profile fetched"));
+  } catch (err) {
+    throw new ApiError(500, err?.message || "Failed to fetch user profile");
   }
 });
