@@ -1,17 +1,12 @@
 import React from "react";
 import { ShoppingCart, UserPlus, LogIn, LogOut, Lock } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useUserStore } from "../store/useUserStore.js";
 
 function Navbar() {
-  const test = {
-    user: false,
-    isAdmin: true,
-    cart: [1, 2, 3],
-  };
-
-  const logout = () => {
-    console.log("logout");
-  };
+  const { user, logout } = useUserStore();
+  const isAdmin = user?.role === "admin";
+  const cart = [1, 23, 1];
 
   return (
     <header className="fixed top-0 left-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-emerald-800">
@@ -33,7 +28,7 @@ function Navbar() {
               Home
             </Link>
 
-            {test.user && (
+            {user && (
               <Link
                 to={"/cart"}
                 className="relative group text-gray-300 hover:text-emerald-400 transition duration-300 
@@ -44,18 +39,18 @@ function Navbar() {
                   size={20}
                 />
                 <span className="hidden sm:inline">Cart</span>
-                {test.cart.length > 0 && (
+                {cart.length > 0 && (
                   <span
                     className="absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2 py-0.5 
 									text-xs group-hover:bg-emerald-400 transition duration-300 ease-in-out"
                   >
-                    {test.cart.length}
+                    {cart.length}
                   </span>
                 )}
               </Link>
             )}
 
-            {test.isAdmin && (
+            {isAdmin && (
               <Link
                 className="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1 rounded-md font-medium
 								 transition duration-300 ease-in-out flex items-center"
@@ -66,7 +61,7 @@ function Navbar() {
               </Link>
             )}
 
-            {test.user ? (
+            {user ? (
               <button
                 className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 
 						rounded-md flex items-center transition duration-300 ease-in-out"

@@ -1,8 +1,20 @@
-import React from "react";
-import { Outlet } from "react-router-dom";
-import { Navbar } from "./components/index.js";
+import React, { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
+import { LoadingSpinner, Navbar } from "./components/index.js";
+import { Toaster } from "react-hot-toast";
+import { useUserStore } from "./store/useUserStore.js";
 
 function App() {
+  const { checkAuth, user, checkingAuth } = useUserStore();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user) navigate("/", { replace: true });
+    else checkAuth();
+  }, [checkAuth, navigate, user]);
+
+  if (checkingAuth) return <LoadingSpinner />;
+
   return (
     <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
       {/* Background Gradient */}
@@ -17,6 +29,7 @@ function App() {
         <main>
           <Outlet />
         </main>
+        <Toaster />
       </div>
     </div>
   );

@@ -3,16 +3,18 @@ import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import { LogIn, Mail, Lock, ArrowRight, Loader } from "lucide-react";
 import InputField from "../components/InputField";
+import { useUserStore } from "../store/useUserStore";
 
 function LoginPage() {
-  const loading = false;
+  const { login, loading } = useUserStore();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(email, password);
+    login(email, password);
+    setPassword("");
   };
 
   const onEmailChange = (e) => setEmail(e.target.value);

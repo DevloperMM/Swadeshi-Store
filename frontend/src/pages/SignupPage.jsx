@@ -3,9 +3,10 @@ import { Link } from "react-router-dom";
 import { UserPlus, Mail, Lock, ArrowRight, Loader } from "lucide-react";
 import { motion } from "framer-motion";
 import InputField from "../components/InputField.jsx";
+import { useUserStore } from "../store/useUserStore.js";
 
 function SignupPage() {
-  const loading = false;
+  const { signup, loading } = useUserStore();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -16,7 +17,8 @@ function SignupPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(formData);
+    signup(formData);
+    setFormData({ ...formData, email: "", confirmPassword: "" });
   };
 
   const onNameChange = (e) =>
