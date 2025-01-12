@@ -18,7 +18,7 @@ function SignupPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     signup(formData);
-    setFormData({ ...formData, email: "", confirmPassword: "" });
+    setFormData({ ...formData, email: "", password: "", confirmPassword: "" });
   };
 
   const onNameChange = (e) =>

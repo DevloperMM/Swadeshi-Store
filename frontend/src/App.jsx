@@ -1,17 +1,16 @@
 import React, { useEffect } from "react";
-import { Outlet, useNavigate } from "react-router-dom";
 import { LoadingSpinner, Navbar } from "./components/index.js";
 import { Toaster } from "react-hot-toast";
 import { useUserStore } from "./store/useUserStore.js";
+import { Navigate, Route, Routes } from "react-router-dom";
+import { HomePage, SignupPage, LoginPage, AdminPage } from "./pages/index.js";
 
 function App() {
-  const { checkAuth, user, checkingAuth } = useUserStore();
-  const navigate = useNavigate();
+  const { checkAuth, checkingAuth, user } = useUserStore();
 
   useEffect(() => {
-    if (user) navigate("/", { replace: true });
-    else checkAuth();
-  }, [checkAuth, navigate, user]);
+    checkAuth();
+  }, [checkAuth]);
 
   if (checkingAuth) return <LoadingSpinner />;
 
@@ -26,9 +25,24 @@ function App() {
 
       <div className="relative z-50 pt-20">
         <Navbar />
-        <main>
-          <Outlet />
-        </main>
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route
+            path="/signup"
+            element={!user ? <SignupPage /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/login"
+            element={!user ? <LoginPage /> : <Navigate to="/" />}
+          />
+          <Route
+            path="/dashboard"
+            element={
+              user?.role === "admin" ? <AdminPage /> : <Navigate to="/login" />
+            }
+            // Need to fix this as customer will not be able to go and without any indication login will redirect him to home
+          />
+        </Routes>
         <Toaster />
       </div>
     </div>
