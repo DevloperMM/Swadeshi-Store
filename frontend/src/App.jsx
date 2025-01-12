@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { LoadingSpinner, Navbar } from "./components/index.js";
+import { Loader, Navbar } from "./components/index.js";
 import { Toaster } from "react-hot-toast";
 import { useUserStore } from "./store/useUserStore.js";
 import { Navigate, Route, Routes } from "react-router-dom";
@@ -12,7 +12,7 @@ function App() {
     checkAuth();
   }, [checkAuth]);
 
-  if (checkingAuth) return <LoadingSpinner />;
+  if (checkingAuth) return <Loader />;
 
   return (
     <div className="min-h-screen bg-gray-900 text-white relative overflow-hidden">
