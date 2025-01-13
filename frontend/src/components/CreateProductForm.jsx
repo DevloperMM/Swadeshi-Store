@@ -9,7 +9,7 @@ function CreateProductForm() {
   const [prodData, setProdData] = useState({
     title: "",
     description: "",
-    price: 0,
+    price: "",
     category: "",
     image: null,
   });

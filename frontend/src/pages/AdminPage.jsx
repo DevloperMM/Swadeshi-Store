@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { BarChart, PlusCircle, ShoppingBasket } from "lucide-react";
 import { motion } from "framer-motion";
 import {
@@ -6,6 +6,7 @@ import {
   CreateProductForm,
   ProductsList,
 } from "../components/index.js";
+import { useProductStore } from "../store/useProductStore.js";
 
 const tabs = [
   { id: "create", label: "Create Product", icon: PlusCircle },
@@ -15,6 +16,11 @@ const tabs = [
 
 function AdminPage() {
   const [activeTab, setActiveTab] = useState("create");
+
+  const { fetchAllProducts } = useProductStore();
+  useEffect(() => {
+    fetchAllProducts();
+  }, [fetchAllProducts]);
 
   return (
     <div className="min-h-screen relative overflow-hidden">

@@ -117,9 +117,7 @@ export const deleteProduct = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json(
-        new ApiResponse(200, deleteResponse, "Product unlisted successfully")
-      );
+      .json(new ApiResponse(200, product, "Product unlisted successfully"));
   } catch (err) {
     throw new ApiError(
       500,
