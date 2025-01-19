@@ -1,9 +1,15 @@
 import React, { useEffect } from "react";
-import { Loader, Navbar } from "./components/index.js";
+import { Loader, Navbar, ScrollTop } from "./components/index.js";
 import { Toaster } from "react-hot-toast";
 import { useUserStore } from "./store/useUserStore.js";
 import { Navigate, Route, Routes } from "react-router-dom";
-import { HomePage, SignupPage, LoginPage, AdminPage } from "./pages/index.js";
+import {
+  HomePage,
+  SignupPage,
+  LoginPage,
+  AdminPage,
+  CategoryPage,
+} from "./pages/index.js";
 
 function App() {
   const { checkAuth, checkingAuth, user } = useUserStore();
@@ -25,6 +31,7 @@ function App() {
 
       <div className="relative z-50 pt-20">
         <Navbar />
+        <ScrollTop />
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route
@@ -40,8 +47,9 @@ function App() {
             element={
               user?.role === "admin" ? <AdminPage /> : <Navigate to="/login" />
             }
-            // Need to fix this as customer will not be able to go and without any indication login will redirect him to home
+            // Need to fix this as customer will not be able to navigate and without any indication login will redirect him to home
           />
+          <Route path="/category/:category" element={<CategoryPage />} />
         </Routes>
         <Toaster />
       </div>

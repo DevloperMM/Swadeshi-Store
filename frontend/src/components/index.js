@@ -5,6 +5,8 @@ import CategoryItem from "./CategoryItem.jsx";
 import CreateProductForm from "./CreateProductForm.jsx";
 import ProductsList from "./ProductsList.jsx";
 import AnalyticsTab from "./AnalyticsTab.jsx";
+import ProductCard from "./ProductCard.jsx";
+import ScrollTop from "./ScrollTop.jsx";
 
 export {
   Navbar,
@@ -14,4 +16,6 @@ export {
   CreateProductForm,
   ProductsList,
   AnalyticsTab,
+  ProductCard,
+  ScrollTop,
 };

@@ -3,7 +3,15 @@ import { motion } from "framer-motion";
 import { PlusCircle, Upload, Loader } from "lucide-react";
 import { useProductStore } from "../store/useProductStore.js";
 
-const catgs = ["jean", "tshirt", "shoe", "glasse", "jacket", "suit", "bag"];
+const categories = [
+  "jeans",
+  "tshirts",
+  "shoes",
+  "glasses",
+  "jackets",
+  "suits",
+  "bags",
+];
 
 function CreateProductForm() {
   const [prodData, setProdData] = useState({
@@ -124,7 +132,7 @@ function CreateProductForm() {
             required
           >
             <option value="">Select a category</option>
-            {catgs.map((category) => (
+            {categories.map((category) => (
               <option key={category} value={category}>
                 {category}
               </option>
