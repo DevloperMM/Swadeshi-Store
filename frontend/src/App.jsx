@@ -9,14 +9,22 @@ import {
   LoginPage,
   AdminPage,
   CategoryPage,
+  CartPage,
 } from "./pages/index.js";
+import { useCartStore } from "./store/useCartStore.js";
 
 function App() {
   const { checkAuth, checkingAuth, user } = useUserStore();
+  const { getCartItems } = useCartStore();
 
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
+
+  useEffect(() => {
+    if (!user) return;
+    getCartItems();
+  }, [getCartItems, user]);
 
   if (checkingAuth) return <Loader />;
 
@@ -50,6 +58,10 @@ function App() {
             // Need to fix this as customer will not be able to navigate and without any indication login will redirect him to home
           />
           <Route path="/category/:category" element={<CategoryPage />} />
+          <Route
+            path="/cart"
+            element={user ? <CartPage /> : <Navigate to="/login" />}
+          />
         </Routes>
         <Toaster />
       </div>

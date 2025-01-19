@@ -7,6 +7,10 @@ import ProductsList from "./ProductsList.jsx";
 import AnalyticsTab from "./AnalyticsTab.jsx";
 import ProductCard from "./ProductCard.jsx";
 import ScrollTop from "./ScrollTop.jsx";
+import CartItem from "./CartItem.jsx";
+import PeopleAlsoBought from "./PeopleAlsoBought.jsx";
+import OrderSummary from "./OrderSummary.jsx";
+import GiftCoupon from "./GiftCoupon.jsx";
 
 export {
   Navbar,
@@ -18,4 +22,8 @@ export {
   AnalyticsTab,
   ProductCard,
   ScrollTop,
+  CartItem,
+  PeopleAlsoBought,
+  OrderSummary,
+  GiftCoupon,
 };

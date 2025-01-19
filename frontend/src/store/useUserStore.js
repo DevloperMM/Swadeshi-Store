@@ -20,7 +20,7 @@ export const useUserStore = create((set, get) => ({
       toast.success(res.data.message);
     } catch (err) {
       set({ loading: false });
-      toast.error(err.response.data.message || "An error occurred");
+      toast.error(err.response.data.message || "Failed to register");
     }
   },
 
@@ -32,7 +32,7 @@ export const useUserStore = create((set, get) => ({
       toast.success(res.data.message);
     } catch (err) {
       set({ loading: false });
-      toast.error(err.response.data.message || "An error occurred");
+      toast.error(err.response.data.message || "Failed to login");
     }
   },
 
@@ -42,7 +42,7 @@ export const useUserStore = create((set, get) => ({
       set({ user: null });
       toast.success(res.data.message);
     } catch (err) {
-      toast.error(err.response.data.message || "An error occurred");
+      toast.error(err.response.data.message || "Failed logging out");
     }
   },
 

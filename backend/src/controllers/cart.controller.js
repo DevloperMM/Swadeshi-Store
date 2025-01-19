@@ -47,11 +47,11 @@ export const addItemToCart = asyncHandler(async (req, res) => {
       isItemInCart.quantity += 1;
       response = isItemInCart;
     } else {
-      user.cartItems.push({ product: productId });
       response = {
         quantity: 1,
         product: productId,
       };
+      user.cartItems.push(response);
     }
 
     await user.save();
