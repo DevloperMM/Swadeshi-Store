@@ -1,15 +1,67 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
-import { MoveRight } from "lucide-react";
+import { Link, useNavigate } from "react-router-dom";
+import { MoveRight, Loader } from "lucide-react";
 import { useCartStore } from "../store/useCartStore";
+import axios from "../lib/axios";
 
 function OrderSummary() {
-  const { total, subTotal, coupon, isCouponApplied, cart } = useCartStore();
+  const { total, subTotal, coupon, isCouponApplied, cart, clearCart } =
+    useCartStore();
 
   const savings = subTotal - total;
-  const handlePayment = () => {
-    console.log("Payment in process..");
+
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
+
+  const handlePayment = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.post("/payments/create-order", {
+        products: cart,
+        couponCode: coupon,
+      });
+
+      const order = data.data;
+
+      const options = {
+        key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount: order.amount,
+        currency: order.currency,
+        order_id: order.id,
+        name: "DevloperMM Galaxy",
+        description: "A testing payment gateway and it will not debit your a/c",
+        theme: { color: "#3399cc" },
+        handler: async (payment) => {
+          try {
+            await axios.post("/payments/verify-order", {
+              orderId: `${order.id}`,
+              payId: `${payment.razorpay_payment_id}`,
+              signature: `${payment.razorpay_signature}`,
+              metadata: order.metadata,
+            });
+
+            clearCart();
+            navigate("/purchase-success");
+          } catch (err) {
+            console.error("Payment verifying error: ", err);
+            navigate("/purchase-failure");
+          }
+        },
+        modal: {
+          ondismiss: () => {
+            navigate("/purchase-failure");
+          },
+        },
+      };
+
+      setLoading(false);
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (err) {
+      navigate("/purchase-failure");
+      console.error("Payment handling error: ", err);
+    }
   };
 
   return (
@@ -28,7 +80,7 @@ function OrderSummary() {
               Original price
             </dt>
             <dd className="text-base font-medium text-white">
-              ${subTotal.toFixed(2)}
+              ₹{subTotal.toFixed(2)}
             </dd>
           </dl>
 
@@ -36,7 +88,7 @@ function OrderSummary() {
             <dl className="flex items-center justify-between gap-4">
               <dt className="text-base font-normal text-gray-300">Savings</dt>
               <dd className="text-base font-medium text-emerald-400">
-                -${savings.toFixed(2)}
+                -₹{savings.toFixed(2)}
               </dd>
             </dl>
           )}
@@ -54,7 +106,7 @@ function OrderSummary() {
           <dl className="flex items-center justify-between gap-4 border-t border-gray-600 pt-2">
             <dt className="text-base font-bold text-white">Total</dt>
             <dd className="text-base font-bold text-emerald-400">
-              ${total.toFixed(2)}
+              ₹{total.toFixed(2)}
             </dd>
           </dl>
         </div>
@@ -65,7 +117,17 @@ function OrderSummary() {
           whileTap={{ scale: 0.95 }}
           onClick={handlePayment}
         >
-          Proceed to Checkout
+          {loading ? (
+            <>
+              <Loader
+                className="mr-2 h-5 w-5 animate-spin"
+                aria-hidden="true"
+              />
+              Loading...
+            </>
+          ) : (
+            "Proceed to Checkout"
+          )}
         </motion.button>
 
         <div className="flex items-center justify-center gap-2">

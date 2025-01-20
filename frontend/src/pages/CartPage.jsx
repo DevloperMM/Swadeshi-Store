@@ -6,15 +6,16 @@ import {
   CartItem,
   GiftCoupon,
   OrderSummary,
+  Loader,
   PeopleAlsoBought,
 } from "../components/index.js";
 import { useCartStore } from "../store/useCartStore.js";
 
 function CartPage() {
-  const { cart } = useCartStore();
+  const { cart, loading } = useCartStore();
 
-  return (
-    <div className="py-8 md:py-16">
+  return !loading ? (
+    <div>
       <div className="mx-8 max-w-screen-xl px-4 2xl:px-0">
         <div className="mt-6 sm:mt-8 md:gap-2 lg:flex lg:items-start xl:gap-8">
           <motion.div
@@ -27,6 +28,9 @@ function CartPage() {
               <EmptyCartUI />
             ) : (
               <div className="space-y-6">
+                <h3 className="text-2xl font-semibold text-emerald-400">
+                  Shopping Cart
+                </h3>
                 {cart.map((item) => (
                   <CartItem key={item._id} item={item} />
                 ))}
@@ -49,6 +53,8 @@ function CartPage() {
         </div>
       </div>
     </div>
+  ) : (
+    <Loader />
   );
 }
 

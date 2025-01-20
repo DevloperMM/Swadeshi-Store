@@ -10,6 +10,8 @@ import {
   AdminPage,
   CategoryPage,
   CartPage,
+  PurchaseSuccessPage,
+  PurchaseCancelPage,
 } from "./pages/index.js";
 import { useCartStore } from "./store/useCartStore.js";
 
@@ -37,7 +39,7 @@ function App() {
         </div>
       </div>
 
-      <div className="relative z-50 pt-20">
+      <div className="select-none relative z-50 pt-20">
         <Navbar />
         <ScrollTop />
         <Routes>
@@ -61,6 +63,14 @@ function App() {
           <Route
             path="/cart"
             element={user ? <CartPage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/purchase-success"
+            element={user ? <PurchaseSuccessPage /> : <Navigate to="/login" />}
+          />
+          <Route
+            path="/purchase-failure"
+            element={user ? <PurchaseCancelPage /> : <Navigate to="/login" />}
           />
         </Routes>
         <Toaster />

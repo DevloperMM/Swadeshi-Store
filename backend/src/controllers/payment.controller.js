@@ -3,8 +3,10 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { Coupon } from "../models/coupon.model.js";
 import { Order } from "../models/order.model.js";
+import { User } from "../models/user.model.js";
 import rzp from "../lib/razorpay.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import mongoose from "mongoose";
 
 async function createNewCoupon(userId) {
   await Coupon.findOneAndDelete({ userId });
@@ -28,7 +30,7 @@ export const createOrder = asyncHandler(async (req, res) => {
 
     let totalAmt = 0;
     const cartItems = products.map((item) => {
-      totalAmt += Math.round(item.price * item.quantity);
+      totalAmt += item.price * item.quantity;
       return {
         product: item._id,
         quantity: item.quantity,
@@ -44,12 +46,12 @@ export const createOrder = asyncHandler(async (req, res) => {
       });
 
       if (coupon) {
-        totalAmt -= Math.round(totalAmt * (coupon.discount / 100));
+        totalAmt -= totalAmt * (coupon.discount / 100);
       }
     }
 
     const options = {
-      amount: totalAmt * 100,
+      amount: Math.round(totalAmt * 100),
       currency: "INR",
       receipt: `${Date.now()}`,
     };
@@ -75,17 +77,19 @@ export const verifyOrder = asyncHandler(async (req, res) => {
   try {
     const { orderId, payId, signature, metadata } = req.body;
     const decryptSignature = crypto
-      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .createHmac("sha256", process.env.RZP_KEY_SECRET)
       .update(`${orderId}|${payId}`)
       .digest("hex");
 
     if (decryptSignature === signature) {
       const order = await Order.create({
-        buyer: metadata.userId,
+        buyer: new mongoose.Types.ObjectId(metadata.userId),
         products: metadata.cartItems,
         orderTotal: metadata.amount,
         paymentId: payId,
       });
+
+      await User.findByIdAndUpdate(metadata.userId, { cartItems: [] });
 
       if (metadata.coupon?.code) {
         await Coupon.findOneAndUpdate(
@@ -94,7 +98,7 @@ export const verifyOrder = asyncHandler(async (req, res) => {
         );
       }
 
-      if (metadata.totalAmt > 4999) {
+      if (metadata.amount > 4999) {
         await createNewCoupon(metadata.userId);
       }
 

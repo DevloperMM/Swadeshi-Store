@@ -8,11 +8,13 @@ export const useCartStore = create((set, get) => ({
   total: 0,
   subTotal: 0,
   isCouponApplied: false,
+  loading: false,
 
   getCartItems: async () => {
+    set({ loading: true });
     try {
       const res = await axios.get("/cart");
-      set({ cart: res.data.data });
+      set({ cart: res.data.data, loading: false });
       get().calcTotals();
     } catch (err) {
       set({ cart: [] });
@@ -20,7 +22,12 @@ export const useCartStore = create((set, get) => ({
     }
   },
 
+  clearCart: () => {
+    set({ cart: [], coupon: null, total: 0, subTotal: 0 });
+  },
+
   addToCart: async (product) => {
+    set({ loading: true });
     try {
       const res = await axios.post("/cart", { productId: product._id });
       toast.success(res.data.message);
@@ -35,7 +42,7 @@ export const useCartStore = create((set, get) => ({
                 : item
             )
           : [...prevState.cart, { ...product, quantity: 1 }];
-        return { cart: newCart };
+        return { cart: newCart, loading: false };
       });
       get().calcTotals();
     } catch (err) {
@@ -44,11 +51,15 @@ export const useCartStore = create((set, get) => ({
   },
 
   removeFromCart: async (productId) => {
-    const res = await axios.delete("/cart", { data: { productId } });
-    set((prevState) => ({
-      cart: prevState.cart.filter((item) => item._id !== productId),
-    }));
-    get().calcTotals();
+    try {
+      await axios.delete("/cart", { data: { productId } });
+      set((prevState) => ({
+        cart: prevState.cart.filter((item) => item._id !== productId),
+      }));
+      get().calcTotals();
+    } catch (err) {
+      toast.error(err.response.data.message || "Failed removing from cart");
+    }
   },
 
   updateQty: async (productId, qty) => {
@@ -66,7 +77,8 @@ export const useCartStore = create((set, get) => ({
   calcTotals: () => {
     const { cart, coupon } = get();
     const subTotal = cart?.reduce(
-      (sum, item) => (sum + item.price * item.quantity, 0)
+      (sum, item) => sum + item.price * item.quantity,
+      0
     );
 
     let total = subTotal;
