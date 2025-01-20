@@ -43,6 +43,7 @@ export const useProductStore = create((set) => ({
       set({ products: res.data.data, loading: false });
     } catch (err) {
       set({ loading: false });
+      console.log(`Error in ${category} products: ${err}`);
     }
   },
 
@@ -53,6 +54,18 @@ export const useProductStore = create((set) => ({
       set({ products: res.data.data, loading: false });
     } catch (err) {
       set({ loading: false });
+      console.log("Error while recommending: ", err);
+    }
+  },
+
+  fetchFeaturedProducts: async () => {
+    set({ loading: true });
+    try {
+      const res = await axios.get("/products/featured");
+      set({ products: res.data.data, loading: false });
+    } catch (err) {
+      set({ loading: false });
+      console.log("Error fetching featured: ", err);
     }
   },
 

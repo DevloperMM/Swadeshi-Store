@@ -10,15 +10,35 @@ export const useCartStore = create((set, get) => ({
   isCouponApplied: false,
   loading: false,
 
+  calcTotals: () => {
+    const { cart, coupon } = get();
+    const subTotal = cart?.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+
+    let total = subTotal;
+    if (coupon) {
+      const discount = subTotal * (coupon.discount / 100);
+      total = subTotal - discount;
+    }
+
+    set({ subTotal, total });
+  },
+
+  //basic operations on cart
+
   getCartItems: async () => {
     set({ loading: true });
     try {
       const res = await axios.get("/cart");
-      set({ cart: res.data.data, loading: false });
+      set({ cart: res.data.data });
       get().calcTotals();
     } catch (err) {
       set({ cart: [] });
       toast.error(err.response.data.message || "Failed to fetch cart items");
+    } finally {
+      set({ loading: false });
     }
   },
 
@@ -27,7 +47,6 @@ export const useCartStore = create((set, get) => ({
   },
 
   addToCart: async (product) => {
-    set({ loading: true });
     try {
       const res = await axios.post("/cart", { productId: product._id });
       toast.success(res.data.message);
@@ -42,7 +61,7 @@ export const useCartStore = create((set, get) => ({
                 : item
             )
           : [...prevState.cart, { ...product, quantity: 1 }];
-        return { cart: newCart, loading: false };
+        return { cart: newCart };
       });
       get().calcTotals();
     } catch (err) {
@@ -74,19 +93,31 @@ export const useCartStore = create((set, get) => ({
     get().calcTotals();
   },
 
-  calcTotals: () => {
-    const { cart, coupon } = get();
-    const subTotal = cart?.reduce(
-      (sum, item) => sum + item.price * item.quantity,
-      0
-    );
+  // basic operations on coupons
 
-    let total = subTotal;
-    if (coupon) {
-      const discount = subTotal * (coupon.discount / 100);
-      total = subTotal - discount;
+  getMyCoupon: async () => {
+    try {
+      const res = await axios.get("/coupons");
+      set({ coupon: res.data.data });
+    } catch (err) {
+      console.log("Failed to fetch Coupon: ", err);
     }
+  },
 
-    set({ subTotal, total });
+  applyCoupon: async (code) => {
+    try {
+      const res = await axios.post("/coupons/validate", { code });
+      set({ coupon: res.data.data, isCouponApplied: true });
+      get().calcTotals();
+      toast.success("Coupon applied successfully");
+    } catch (err) {
+      toast.error(err.response?.data?.message || "Failed to apply coupon");
+    }
+  },
+
+  removeCoupon: () => {
+    set({ coupon: null, isCouponApplied: false });
+    get().calcTotals();
+    toast.success("Coupon removed");
   },
 }));

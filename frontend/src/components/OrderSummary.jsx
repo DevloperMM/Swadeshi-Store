@@ -19,7 +19,7 @@ function OrderSummary() {
     try {
       const { data } = await axios.post("/payments/create-order", {
         products: cart,
-        couponCode: coupon,
+        couponCode: `${coupon.code}`,
       });
 
       const order = data.data;

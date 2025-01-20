@@ -11,6 +11,7 @@ import CartItem from "./CartItem.jsx";
 import PeopleAlsoBought from "./PeopleAlsoBought.jsx";
 import OrderSummary from "./OrderSummary.jsx";
 import GiftCoupon from "./GiftCoupon.jsx";
+import FeaturedProducts from "./FeaturedProducts.jsx";
 
 export {
   Navbar,
@@ -26,4 +27,5 @@ export {
   PeopleAlsoBought,
   OrderSummary,
   GiftCoupon,
+  FeaturedProducts,
 };

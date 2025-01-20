@@ -184,15 +184,29 @@ export const getProductsByCategory = asyncHandler(async (req, res) => {
 });
 
 export const getRecommendedProducts = asyncHandler(async (req, res) => {
-  // TODO = {
-  //   task: "Use LLMs to generate recommendations for users"
-  //   ways: {
-  //     1: "Use cart products, past orders to recommend products",
-  //     2: "Randomly generate if both are not available",;
-  //   }
-  // };
+  try {
+    const products = await Product.aggregate([
+      { $sample: { size: 3 } },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          description: 1,
+          image: 1,
+          price: 1,
+        },
+      },
+    ]);
 
-  return res
-    .status(200)
-    .json(new ApiResponse(200, null, "This page is under maintenance"));
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(200, products, "Similar products fetched successfully")
+      );
+  } catch (err) {
+    throw new ApiError(
+      500,
+      err?.message || "Try getting other products in a moment again"
+    );
+  }
 });

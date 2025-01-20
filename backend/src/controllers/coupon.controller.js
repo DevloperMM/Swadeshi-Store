@@ -10,9 +10,11 @@ export const getCoupon = asyncHandler(async (req, res) => {
       isActive: true,
     });
 
-    return res
-      .status(200)
-      .json(new ApiResponse(200, coupon || null, "Coupon found"));
+    if (!coupon) {
+      throw new ApiError(400, "No coupon found for this order");
+    }
+
+    return res.status(200).json(new ApiResponse(200, coupon, "Coupon found"));
   } catch (err) {
     throw new ApiError(500, err?.message || "Try fetching coupon again");
   }
@@ -39,13 +41,7 @@ export const validateCoupon = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          { code: coupon.code, discount: code.discount },
-          "Coupon is valid"
-        )
-      );
+      .json(new ApiResponse(200, coupon, "Coupon is valid"));
   } catch (err) {
     throw new ApiError(500, err?.message || "Try validating coupon again");
   }
