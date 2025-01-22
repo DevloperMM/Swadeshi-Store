@@ -14,7 +14,7 @@ async function createNewCoupon(userId) {
   const newCoupon = await Coupon.create({
     code: `GIFT${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
     discount: 10,
-    expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    expiryDate: new Date(Date.now() + eval(process.env.COUPON_EXPIRY)),
     userId: userId,
   });
 
@@ -23,7 +23,7 @@ async function createNewCoupon(userId) {
 
 export const createOrder = asyncHandler(async (req, res) => {
   try {
-    const { products, couponCode } = req.body;
+    const { products, couponCode, isCouponApplied } = req.body;
     if (!Array.isArray(products) || products.length === 0) {
       throw new ApiError(400, "Empty cart!! Order can't be placed");
     }
@@ -38,7 +38,7 @@ export const createOrder = asyncHandler(async (req, res) => {
     });
 
     let coupon = null;
-    if (couponCode) {
+    if (isCouponApplied && couponCode) {
       coupon = await Coupon.findOne({
         code: couponCode,
         userId: req.user._id,
@@ -82,18 +82,11 @@ export const verifyOrder = asyncHandler(async (req, res) => {
       .digest("hex");
 
     if (decryptSignature === signature) {
-      const order = await Order.create({
-        buyer: new mongoose.Types.ObjectId(metadata.userId),
-        products: metadata.cartItems,
-        orderTotal: metadata.amount,
-        paymentId: payId,
-      });
-
       await User.findByIdAndUpdate(metadata.userId, { cartItems: [] });
 
       if (metadata.coupon?.code) {
         await Coupon.findOneAndUpdate(
-          { code, userId: metadata.userId },
+          { code: metadata.coupon.code, userId: metadata.userId },
           { isActive: false }
         );
       }
@@ -101,6 +94,13 @@ export const verifyOrder = asyncHandler(async (req, res) => {
       if (metadata.amount > 4999) {
         await createNewCoupon(metadata.userId);
       }
+
+      const order = await Order.create({
+        buyer: new mongoose.Types.ObjectId(metadata.userId),
+        products: metadata.cartItems,
+        orderTotal: metadata.amount,
+        paymentId: payId,
+      });
 
       return res
         .status(200)

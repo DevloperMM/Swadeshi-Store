@@ -131,17 +131,15 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
     const { accessToken, refreshToken } = await generateTokens(
       decodedToken?._id
     );
+    await redis.set(`refreshToken:${decodedToken?._id}`, refreshToken, {
+      ex: eval(process.env.REFRESH_TOKEN_EXPIRY),
+    });
 
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .json(
-        new ApiResponse(
-          200,
-          { accessToken, refreshToken },
-          "Access Token Refreshed"
-        )
-      );
+      .cookie("refreshToken", refreshToken, options)
+      .json(new ApiResponse(200, {}, "Access Token Refreshed"));
   } catch (err) {
     throw new ApiError(
       500,

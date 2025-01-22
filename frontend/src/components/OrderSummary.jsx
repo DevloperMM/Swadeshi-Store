@@ -19,7 +19,8 @@ function OrderSummary() {
     try {
       const { data } = await axios.post("/payments/create-order", {
         products: cart,
-        couponCode: `${coupon.code}`,
+        couponCode: `${coupon?.code}`,
+        isCouponApplied,
       });
 
       const order = data.data;
@@ -123,7 +124,7 @@ function OrderSummary() {
                 className="mr-2 h-5 w-5 animate-spin"
                 aria-hidden="true"
               />
-              Loading...
+              Processing...
             </>
           ) : (
             "Proceed to Checkout"
