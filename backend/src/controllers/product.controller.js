@@ -67,7 +67,7 @@ export const createProduct = asyncHandler(async (req, res) => {
   try {
     const { title, description, price, category } = req.body;
     if (!(title && description && price && category)) {
-      throw new ApiError(401, "All fields are required");
+      throw new ApiError(400, "All fields are required");
     }
 
     const imagePath = req.file?.path;

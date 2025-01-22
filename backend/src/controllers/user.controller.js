@@ -84,22 +84,20 @@ export const login = asyncHandler(async (req, res) => {
 
 export const logout = asyncHandler(async (req, res) => {
   try {
-    const userId = req?.user._id;
-    const user = await User.findById(userId);
-    if (!user) {
-      throw new ApiError(
-        401,
-        "Unauthorised request - this action requires login"
+    const refreshToken = req.cookies.refreshToken;
+    if (refreshToken) {
+      const decoded = jwt.verify(
+        refreshToken,
+        process.env.REFRESH_TOKEN_SECRET
       );
+      await redis.del(`refresh_token:${decoded.userId}`);
     }
-
-    await redis.del(`refreshToken:${userId}`);
 
     return res
       .status(200)
       .clearCookie("accessToken", options)
       .clearCookie("refreshToken", options)
-      .json(new ApiResponse(200, { user }, "Logout successful!"));
+      .json(new ApiResponse(200, {}, "Logout successful!"));
   } catch (err) {
     throw new ApiError(
       500,
@@ -125,20 +123,16 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
     const userRefToken = await redis.get(`refreshToken:${decodedToken?._id}`);
 
     if (incomingRefreshToken !== userRefToken) {
-      throw new ApiError(401, "Refresh token is expired");
+      throw new ApiError(401, "Refresh token has expired");
     }
 
     const { accessToken, refreshToken } = await generateTokens(
       decodedToken?._id
     );
-    await redis.set(`refreshToken:${decodedToken?._id}`, refreshToken, {
-      ex: eval(process.env.REFRESH_TOKEN_EXPIRY),
-    });
 
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .cookie("refreshToken", refreshToken, options)
       .json(new ApiResponse(200, {}, "Access Token Refreshed"));
   } catch (err) {
     throw new ApiError(
