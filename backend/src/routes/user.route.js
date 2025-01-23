@@ -15,7 +15,7 @@ router.post("/login", login);
 router.post("/refresh-token", refreshAccessToken);
 
 //secured routes
-router.post("/logout", authProtect, logout);
+router.post("/logout", logout);
 router.get("/profile", authProtect, getProfile);
 
 export default router;

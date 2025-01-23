@@ -54,9 +54,7 @@ function App() {
           />
           <Route
             path="/dashboard"
-            element={
-              user?.role === "admin" ? <AdminPage /> : <Navigate to="/login" />
-            }
+            element={user ? <AdminPage /> : <Navigate to="/login" />}
             // Need to fix this as customer will not be able to navigate and without any indication login will redirect him to home
           />
           <Route path="/category/:category" element={<CategoryPage />} />

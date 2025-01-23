@@ -31,7 +31,7 @@ function SignupPage() {
     setFormData({ ...formData, confirmPassword: e.target.value });
 
   return (
-    <div className="flex flex-col justify-center py-4 sm:px-6 lg:px-8">
+    <div className="flex flex-col justify-center py-14 sm:py-4 px-4 sm:px-6 lg:px-8">
       <motion.div
         className="sm:mx-auto sm:w-full sm:max-w-md"
         initial={{ opacity: 0, y: -20 }}

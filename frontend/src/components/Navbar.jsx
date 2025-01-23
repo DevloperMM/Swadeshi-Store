@@ -6,7 +6,6 @@ import { useCartStore } from "../store/useCartStore.js";
 
 function Navbar() {
   const { user, logout } = useUserStore();
-  const isAdmin = user?.role === "admin";
   const { cart } = useCartStore();
 
   return (
@@ -51,7 +50,7 @@ function Navbar() {
               </Link>
             )}
 
-            {isAdmin && (
+            {user && (
               <Link
                 className="bg-emerald-700 hover:bg-emerald-600 text-white px-3 py-1 rounded-md font-medium
 								 transition duration-300 ease-in-out flex items-center"
@@ -79,7 +78,7 @@ function Navbar() {
 									rounded-md flex items-center transition duration-300 ease-in-out"
                 >
                   <UserPlus className="mr-2" size={18} />
-                  Sign Up
+                  <span className="hidden sm:inline ml-2">Sign Up</span>
                 </Link>
                 <Link
                   to={"/login"}
@@ -87,7 +86,7 @@ function Navbar() {
 									rounded-md flex items-center transition duration-300 ease-in-out"
                 >
                   <LogIn className="mr-2" size={18} />
-                  Login
+                  <span className="hidden sm:inline ml-2">Login</span>
                 </Link>
               </>
             )}

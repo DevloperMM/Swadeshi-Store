@@ -66,7 +66,7 @@ export const useUserStore = create((set, get) => ({
       set({ checkingAuth: false });
     } catch (error) {
       set({ user: null, checkingAuth: false });
-      throw error;
+      console.log("Error received in refreshing access token");
     }
   },
 }));
@@ -78,7 +78,9 @@ axios.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
-    if (error.response?.status === 401 && !originalRequest._retry) {
+
+    // Check if the error is due to an expired access token
+    if (error.status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
@@ -96,6 +98,7 @@ axios.interceptors.response.use(
         return axios(originalRequest);
       } catch (refreshError) {
         // If refresh fails, redirect to login or handle as needed
+        refreshPromise = null;
         useUserStore.getState().logout();
         return Promise.reject(refreshError);
       }

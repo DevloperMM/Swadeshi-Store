@@ -9,7 +9,7 @@ function GiftCoupon() {
 
   useEffect(() => {
     getMyCoupon();
-  }, [getMyCoupon, coupon]);
+  }, [getMyCoupon]);
 
   useEffect(() => {
     if (coupon) setUserInputCode(coupon.code);

@@ -30,8 +30,8 @@ function OrderSummary() {
         amount: order.amount,
         currency: order.currency,
         order_id: order.id,
-        name: "DevloperMM Galaxy",
-        description: "A testing payment gateway and it will not debit your a/c",
+        name: "DevloperMM",
+        description: "These are dummy payments for real feel",
         theme: { color: "#3399cc" },
         handler: async (payment) => {
           try {
@@ -43,7 +43,9 @@ function OrderSummary() {
             });
 
             clearCart();
-            navigate("/purchase-success");
+            navigate("/purchase-success", {
+              state: { orderID: order.id, payID: payment.razorpay_payment_id },
+            });
           } catch (err) {
             console.error("Payment verifying error: ", err);
             navigate("/purchase-failure");

@@ -100,7 +100,7 @@ export const useCartStore = create((set, get) => ({
       const res = await axios.get("/coupons");
       set({ coupon: res.data.data });
     } catch (err) {
-      console.log("Failed to fetch Coupon: ", err);
+      console.log("Failed to fetch Coupon: ", err.response.data);
     }
   },
 
@@ -111,7 +111,7 @@ export const useCartStore = create((set, get) => ({
       get().calcTotals();
       toast.success("Coupon applied successfully");
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to apply coupon");
+      toast.error(err.response.data.message || "Failed to apply coupon");
     }
   },
 

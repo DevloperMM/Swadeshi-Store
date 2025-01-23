@@ -61,7 +61,7 @@ export const addItemToCart = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, response, "Item added to cart successfully"));
   } catch (err) {
     throw new ApiError(
-      500,
+      err.statusCode || 500,
       err?.message || "Try adding item to cart in a moment again"
     );
   }
@@ -95,7 +95,7 @@ export const removeItemFromCart = asyncHandler(async (req, res) => {
       );
   } catch (err) {
     throw new ApiError(
-      500,
+      err.statusCode || 500,
       err?.message || "Try removing item from cart in a moment again"
     );
   }
@@ -137,7 +137,7 @@ export const updateItemQty = asyncHandler(async (req, res) => {
       );
   } catch (err) {
     throw new ApiError(
-      500,
+      err.statusCode || 500,
       err?.message || "Try updating the item quantity in a moment again"
     );
   }

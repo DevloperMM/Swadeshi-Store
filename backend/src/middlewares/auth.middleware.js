@@ -10,10 +10,7 @@ export const authProtect = asyncHandler(async (req, res, next) => {
       req.header("Authorization")?.replace("Bearer ", "");
 
     if (!token) {
-      throw new ApiError(
-        401,
-        "Unauthorised request - No access token provided"
-      );
+      throw new ApiError(401, "Unauthorised: No access token found");
     }
 
     const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
@@ -26,7 +23,7 @@ export const authProtect = asyncHandler(async (req, res, next) => {
     req.user = user;
     next();
   } catch (err) {
-    throw new ApiError(401, err?.message || "Invalid Access Token");
+    throw new ApiError(401, err?.message || "Token is no more valid");
   }
 });
 
@@ -34,6 +31,6 @@ export const adminProtect = asyncHandler(async (req, res, next) => {
   if (req.user && req.user.role === "admin") {
     next();
   } else {
-    throw new ApiError(403, "Access denied! only ADMIN can access");
+    throw new ApiError(403, "Action denied by ADMIN");
   }
 });

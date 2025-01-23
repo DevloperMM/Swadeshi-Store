@@ -1,9 +1,12 @@
 import React from "react";
 import { HandHeart, ArrowRight, CheckCircle } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import Confetti from "react-confetti";
 
 function PurchaseSuccessPage() {
+  const location = useLocation();
+  const data = location.state;
+
   return (
     <div className="max-h-screen flex items-center justify-center px-4 py-12">
       <Confetti
@@ -11,7 +14,7 @@ function PurchaseSuccessPage() {
         height={window.innerHeight}
         gravity={0.25}
         style={{ zIndex: 99 }}
-        numberOfPieces={1000}
+        numberOfPieces={750}
         recycle={false}
       />
 
@@ -33,9 +36,15 @@ function PurchaseSuccessPage() {
 
           <div className="bg-gray-700 rounded-lg p-4 mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-400">Order number</span>
+              <span className="text-sm text-gray-400">Order ID</span>
               <span className="text-sm font-semibold text-emerald-400">
-                #12345
+                {data?.orderID || "12345"}
+              </span>
+            </div>
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm text-gray-400">Payment ID</span>
+              <span className="text-sm font-semibold text-emerald-400">
+                {data?.payID || "AbCde"}
               </span>
             </div>
             <div className="flex items-center justify-between">

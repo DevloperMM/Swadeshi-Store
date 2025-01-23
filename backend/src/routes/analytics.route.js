@@ -13,7 +13,6 @@ const router = Router();
 router.get(
   "/",
   authProtect,
-  adminProtect,
   asyncHandler(async (req, res) => {
     try {
       const analyticsData = await getAnalytics();

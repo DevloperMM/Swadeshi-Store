@@ -8,6 +8,7 @@ import jwt from "jsonwebtoken";
 const options = {
   httpOnly: true,
   cookies: true,
+  sameSite: "strict",
   secure: process.env.NODE_ENV === "production",
 };
 
@@ -84,13 +85,13 @@ export const login = asyncHandler(async (req, res) => {
 
 export const logout = asyncHandler(async (req, res) => {
   try {
-    const refreshToken = req.cookies.refreshToken;
+    const refreshToken = req.cookies?.refreshToken;
     if (refreshToken) {
       const decoded = jwt.verify(
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET
       );
-      await redis.del(`refresh_token:${decoded.userId}`);
+      await redis.del(`refreshToken:${decoded._id}`);
     }
 
     return res
@@ -133,10 +134,10 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
     return res
       .status(200)
       .cookie("accessToken", accessToken, options)
-      .json(new ApiResponse(200, {}, "Access Token Refreshed"));
+      .json(new ApiResponse(200, "Access Token Refreshed"));
   } catch (err) {
     throw new ApiError(
-      500,
+      err.statusCode || 500,
       err?.message || "Try refreshing the token in a moment again"
     );
   }

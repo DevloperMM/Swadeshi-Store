@@ -15,7 +15,7 @@ const router = Router();
 
 router
   .route("/")
-  .get(authProtect, adminProtect, getAllProducts)
+  .get(authProtect, getAllProducts)
   .post(authProtect, adminProtect, upload.single("image"), createProduct);
 router.get("/featured", getFeaturedProducts);
 router.get("/recommended", getRecommendedProducts);

@@ -21,7 +21,7 @@ export const useProductStore = create((set) => ({
       toast.success(res.data.message);
     } catch (err) {
       set({ loading: false });
-      toast.error(err.response.data.message || "Failed to create product");
+      toast.error(err.response.data.message, { id: "admin_create" });
     }
   },
 
@@ -32,7 +32,7 @@ export const useProductStore = create((set) => ({
       set({ products: res.data.data, loading: false });
     } catch (err) {
       set({ loading: false });
-      toast.error(err.response.data.message || "Failed to fetch products");
+      toast.error(err.response.data.message);
     }
   },
 
@@ -82,7 +82,7 @@ export const useProductStore = create((set) => ({
       toast.success(res.data.message);
     } catch (err) {
       set({ loading: false });
-      toast.error(err.response.data.message || "Failed to delete prodcut");
+      toast.error(err.response.data.message, { id: "admin_del" });
     }
   },
 
@@ -101,7 +101,7 @@ export const useProductStore = create((set) => ({
       toast.success(res.data.message);
     } catch (err) {
       set({ loading: false });
-      toast.error(err.response.data.message || "Failed to update product");
+      toast.error(err.response.data.message, { id: "admin_switch" });
     }
   },
 }));

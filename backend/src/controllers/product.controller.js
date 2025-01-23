@@ -57,7 +57,7 @@ export const getFeaturedProducts = asyncHandler(async (req, res) => {
       );
   } catch (err) {
     throw new ApiError(
-      500,
+      err.statusCode || 500,
       err?.message || "Try fetching featured products in a moment again"
     );
   }
@@ -95,7 +95,7 @@ export const createProduct = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, product, "Product listed successfully"));
   } catch (err) {
     throw new ApiError(
-      500,
+      err.statusCode || 500,
       err?.message || "Try creating product in a moment again"
     );
   }
@@ -120,7 +120,7 @@ export const deleteProduct = asyncHandler(async (req, res) => {
       .json(new ApiResponse(200, product, "Product unlisted successfully"));
   } catch (err) {
     throw new ApiError(
-      500,
+      err.statusCode || 500,
       err?.message || "Try deleting product in a moment again"
     );
   }
@@ -152,7 +152,7 @@ export const toggleFeatured = asyncHandler(async (req, res) => {
       );
   } catch (err) {
     throw new ApiError(
-      500,
+      err.statusCode || 500,
       err?.message || "Try toggle featuring in a moment again"
     );
   }
@@ -177,7 +177,7 @@ export const getProductsByCategory = asyncHandler(async (req, res) => {
       );
   } catch (err) {
     throw new ApiError(
-      500,
+      err.statusCode || 500,
       err?.message || "Try getting category products in a moment again"
     );
   }

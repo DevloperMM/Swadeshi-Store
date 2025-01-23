@@ -69,7 +69,10 @@ export const createOrder = asyncHandler(async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, order, "Order created successfully"));
   } catch (err) {
-    throw new ApiError(500, err?.message || "Try again!! Something went wrong");
+    throw new ApiError(
+      err.statusCode || 500,
+      err?.message || "Try again!! Something went wrong"
+    );
   }
 });
 
@@ -109,6 +112,9 @@ export const verifyOrder = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Payment failed!!");
     }
   } catch (err) {
-    throw new ApiError(500, err?.message || "Payment failed!! Try again");
+    throw new ApiError(
+      err.statusCode || 500,
+      err?.message || "Payment failed!! Try again"
+    );
   }
 });

@@ -32,7 +32,7 @@ function FeaturedProducts({ featured }) {
 
   return (
     <div className="py-12">
-      <div className="w-4/5 container mx-auto px-4">
+      <div className="w-full sm:w-[88%] container mx-auto px-4">
         <h2 className="text-center text-3xl sm:text-4xl font-bold text-emerald-400 mb-8">
           Featured Products
         </h2>
