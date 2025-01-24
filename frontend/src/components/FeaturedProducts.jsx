@@ -33,7 +33,7 @@ function FeaturedProducts({ featured }) {
   const isStartDisabled = currIdx === 0;
   const isEndDisabled = currIdx >= featured.length - itemsPerPage;
 
-  const handleAddToCart = () => {
+  const handleAddToCart = (product) => {
     if (!user) {
       return toast.error("Login for adding to cart", { id: "login" });
     } else {
@@ -76,7 +76,7 @@ function FeaturedProducts({ featured }) {
                         ₹{product.price.toFixed(2)}
                       </p>
                       <button
-                        onClick={handleAddToCart}
+                        onClick={() => handleAddToCart(product)}
                         className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 
 												flex items-center justify-center"
                       >

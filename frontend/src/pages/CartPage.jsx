@@ -27,7 +27,7 @@ function CartPage() {
             {cart.length === 0 ? (
               <EmptyCartUI />
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 <h3 className="text-2xl font-semibold text-emerald-400">
                   Shopping Cart
                 </h3>
@@ -36,20 +36,21 @@ function CartPage() {
                 ))}
               </div>
             )}
+
+            {cart.length > 0 && (
+              <motion.div
+                className="max-w-4xl space-y-4 lg:mt-0 lg:w-full"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <OrderSummary />
+                <GiftCoupon />
+              </motion.div>
+            )}
+
             {cart.length > 0 && <PeopleAlsoBought />}
           </motion.div>
-
-          {cart.length > 0 && (
-            <motion.div
-              className="my-6 max-w-4xl flex-1 space-y-6 lg:mt-0 lg:w-full"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-            >
-              <OrderSummary />
-              <GiftCoupon />
-            </motion.div>
-          )}
         </div>
       </div>
     </div>

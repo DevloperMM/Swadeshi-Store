@@ -13,7 +13,7 @@ function PeopleAlsoBought() {
   if (loading) return <Loader />;
 
   return (
-    <div className="my-12">
+    <div className="my-8">
       <h3 className="text-2xl font-semibold text-emerald-400">
         People also bought
       </h3>
