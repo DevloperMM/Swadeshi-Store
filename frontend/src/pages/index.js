@@ -6,6 +6,7 @@ import CategoryPage from "./CategoryPage.jsx";
 import CartPage from "./CartPage.jsx";
 import PurchaseSuccessPage from "./PurchaseSuccessPage.jsx";
 import PurchaseCancelPage from "./PurchaseCancelPage.jsx";
+import PageNotFound from "./PageNotFound.jsx";
 
 export {
   HomePage,
@@ -16,4 +17,5 @@ export {
   CartPage,
   PurchaseSuccessPage,
   PurchaseCancelPage,
+  PageNotFound,
 };

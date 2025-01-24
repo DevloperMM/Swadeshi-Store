@@ -1,5 +1,6 @@
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { useCartStore } from "../store/useCartStore";
 import { useUserStore } from "../store/useUserStore";
 

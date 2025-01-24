@@ -12,6 +12,7 @@ import {
   CartPage,
   PurchaseSuccessPage,
   PurchaseCancelPage,
+  PageNotFound,
 } from "./pages/index.js";
 import { useCartStore } from "./store/useCartStore.js";
 
@@ -70,6 +71,7 @@ function App() {
             path="/purchase-failure"
             element={user ? <PurchaseCancelPage /> : <Navigate to="/login" />}
           />
+          <Route path="*" element={<PageNotFound />} />
         </Routes>
         <Toaster />
       </div>
