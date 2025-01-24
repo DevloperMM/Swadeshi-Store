@@ -37,20 +37,20 @@ function CartPage() {
               </div>
             )}
 
-            {cart.length > 0 && (
-              <motion.div
-                className="max-w-4xl space-y-4 lg:mt-0 lg:w-full"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-              >
-                <OrderSummary />
-                <GiftCoupon />
-              </motion.div>
-            )}
-
             {cart.length > 0 && <PeopleAlsoBought />}
           </motion.div>
+
+          {cart.length > 0 && (
+            <motion.div
+              className="my-4 max-w-4xl space-y-4 lg:mt-0 lg:w-full"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <OrderSummary />
+              <GiftCoupon />
+            </motion.div>
+          )}
         </div>
       </div>
     </div>

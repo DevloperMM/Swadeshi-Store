@@ -186,7 +186,7 @@ export const getProductsByCategory = asyncHandler(async (req, res) => {
 export const getRecommendedProducts = asyncHandler(async (req, res) => {
   try {
     const products = await Product.aggregate([
-      { $sample: { size: 3 } },
+      { $sample: { size: 2 } },
       {
         $project: {
           _id: 1,
