@@ -112,7 +112,7 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
     req.cookies.refreshToken || req.body.refreshToken;
 
   if (!incomingRefreshToken) {
-    throw new ApiError(401, "Unauthorized request");
+    throw new ApiError(400, "Unauthorized request");
   }
 
   try {
@@ -124,7 +124,7 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
     const userRefToken = await redis.get(`refreshToken:${decodedToken?._id}`);
 
     if (incomingRefreshToken !== userRefToken) {
-      throw new ApiError(401, "Refresh token has expired");
+      throw new ApiError(400, "Refresh token has expired");
     }
 
     const { accessToken, refreshToken } = await generateTokens(
