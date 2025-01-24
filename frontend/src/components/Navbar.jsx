@@ -1,5 +1,12 @@
 import React from "react";
-import { ShoppingCart, UserPlus, LogIn, LogOut, Lock } from "lucide-react";
+import {
+  ShoppingCart,
+  UserPlus,
+  LogIn,
+  LogOut,
+  Lock,
+  Home,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 import { useUserStore } from "../store/useUserStore.js";
 import { useCartStore } from "../store/useCartStore.js";
@@ -14,7 +21,7 @@ function Navbar() {
         <div className="flex flex-wrap justify-between items-center">
           <Link
             to="/"
-            className="text-2xl font-bold text-emerald-400 items-center space-x-2 flex"
+            className="text-xl sm:text-2xl font-bold text-emerald-400 items-center space-x-2 flex"
           >
             E-commerce
           </Link>
@@ -22,21 +29,20 @@ function Navbar() {
           <nav className="flex flex-wrap items-center gap-4">
             <Link
               to={"/"}
-              className="text-gray-300 font-semibold hover:text-emerald-400 transition duration-300
-					 ease-in-out"
+              className="text-gray-300 py-2 pr-1 font-semibold hover:text-emerald-400 transition duration-300 ease-in-out"
             >
-              Home
+              <Home className="inline-block sm:hidden" size={18} />
+              <span className="hidden sm:inline">Home</span>
             </Link>
 
             {user && (
               <Link
                 to={"/cart"}
-                className="relative group text-gray-300 hover:text-emerald-400 transition duration-300 
-							ease-in-out"
+                className="relative group text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out"
               >
                 <ShoppingCart
                   className="inline-block mr-1 group-hover:text-emerald-400"
-                  size={20}
+                  size={18}
                 />
                 <span className="hidden sm:inline">Cart</span>
                 {cart.length > 0 && (
@@ -74,16 +80,14 @@ function Navbar() {
               <>
                 <Link
                   to={"/signup"}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 
-									rounded-md flex items-center transition duration-300 ease-in-out"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white py-2 sm:px-4 px-2 rounded-md flex items-center transition duration-300 ease-in-out"
                 >
                   <UserPlus className="mr-2" size={18} />
                   <span className="hidden sm:inline ml-2">Sign Up</span>
                 </Link>
                 <Link
                   to={"/login"}
-                  className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 
-									rounded-md flex items-center transition duration-300 ease-in-out"
+                  className="bg-gray-700 hover:bg-gray-600 text-white py-2 sm:px-4 px-2 rounded-md flex items-center transition duration-300 ease-in-out"
                 >
                   <LogIn className="mr-2" size={18} />
                   <span className="hidden sm:inline ml-2">Login</span>

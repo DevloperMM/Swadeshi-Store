@@ -1,11 +1,13 @@
 import { ChevronLeft, ChevronRight, ShoppingCart } from "lucide-react";
 import React, { useEffect, useState } from "react";
 import { useCartStore } from "../store/useCartStore";
+import { useUserStore } from "../store/useUserStore";
 
 function FeaturedProducts({ featured }) {
   const [currIdx, setCurrIdx] = useState(0);
   const [itemsPerPage, setItemsPerPage] = useState(3);
 
+  const { user } = useUserStore();
   const { addToCart } = useCartStore();
 
   useEffect(() => {
@@ -29,6 +31,14 @@ function FeaturedProducts({ featured }) {
 
   const isStartDisabled = currIdx === 0;
   const isEndDisabled = currIdx >= featured.length - itemsPerPage;
+
+  const handleAddToCart = () => {
+    if (!user) {
+      return toast.error("Login for adding to cart", { id: "login" });
+    } else {
+      addToCart(product);
+    }
+  };
 
   return (
     <div className="py-12">
@@ -65,7 +75,7 @@ function FeaturedProducts({ featured }) {
                         ₹{product.price.toFixed(2)}
                       </p>
                       <button
-                        onClick={() => addToCart(product)}
+                        onClick={handleAddToCart}
                         className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold py-2 px-4 rounded transition-colors duration-300 
 												flex items-center justify-center"
                       >

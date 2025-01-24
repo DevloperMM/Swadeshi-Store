@@ -20,7 +20,7 @@ export const getItemsInCart = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, cartItems, "Cart items fetched successfully"));
+      .json(new ApiResponse(200, cartItems, "Cart items fetched"));
   } catch (err) {
     throw new ApiError(
       500,
@@ -42,23 +42,18 @@ export const addItemToCart = asyncHandler(async (req, res) => {
       (item) => item.product.toString() === productId
     );
 
-    let response;
     if (isItemInCart) {
       isItemInCart.quantity += 1;
-      response = isItemInCart;
     } else {
-      response = {
+      user.cartItems.push({
         quantity: 1,
         product: productId,
-      };
-      user.cartItems.push(response);
+      });
     }
 
     await user.save();
 
-    return res
-      .status(200)
-      .json(new ApiResponse(200, response, "Item added to cart successfully"));
+    return res.status(200).json(new ApiResponse(200, {}, "Item added to cart"));
   } catch (err) {
     throw new ApiError(
       err.statusCode || 500,
@@ -86,13 +81,7 @@ export const removeItemFromCart = asyncHandler(async (req, res) => {
 
     return res
       .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          isItemInCart,
-          "Item removed from cart successfully"
-        )
-      );
+      .json(new ApiResponse(200, isItemInCart, "Item removed"));
   } catch (err) {
     throw new ApiError(
       err.statusCode || 500,
@@ -126,15 +115,7 @@ export const updateItemQty = asyncHandler(async (req, res) => {
     }
 
     await user.save();
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          user.cartItems,
-          "Item removed from cart successfully"
-        )
-      );
+    return res.status(200).json(new ApiResponse(200, {}, "Item removed"));
   } catch (err) {
     throw new ApiError(
       err.statusCode || 500,
