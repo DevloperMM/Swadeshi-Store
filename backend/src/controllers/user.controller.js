@@ -30,57 +30,66 @@ const generateTokens = async (userId) => {
 export const signup = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
 
-  const isUser = await User.findOne({ email });
-  if (isUser) {
-    throw new ApiError(400, "This email is already registered");
+  try {
+    const isUser = await User.findOne({ email });
+    if (isUser) {
+      throw new ApiError(400, "This email is already registered");
+    }
+
+    const mailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
+    if (!mailRegex.test(email)) {
+      throw new ApiError(400, "Enter valid email address");
+    }
+
+    const user = await User.create({ name, email, password });
+    if (!user) {
+      throw new ApiError(500, "Try registering in a moment again");
+    }
+
+    const { accessToken, refreshToken } = await generateTokens(user._id);
+    await redis.set(`refreshToken:${user._id}`, refreshToken, {
+      ex: eval(process.env.REFRESH_TOKEN_EXPIRY),
+    });
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(new ApiResponse(200, { user }, "Account created successfully!"));
+  } catch (err) {
+    console.log(err);
+    throw new ApiError(500, err?.message || "Try signing up in a moment again");
   }
-
-  const mailRegex = /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/;
-  if (!mailRegex.test(email)) {
-    throw new ApiError(400, "Enter valid email address");
-  }
-
-  const user = await User.create({ name, email, password });
-  if (!user) {
-    throw new ApiError(500, "Try registering in a moment again");
-  }
-
-  const { accessToken, refreshToken } = await generateTokens(user._id);
-  await redis.set(`refreshToken:${user._id}`, refreshToken, {
-    ex: eval(process.env.REFRESH_TOKEN_EXPIRY),
-  });
-
-  return res
-    .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json(new ApiResponse(200, { user }, "Account created successfully!"));
 });
 
 export const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
-  const user = await User.findOne({ email });
+  try {
+    const user = await User.findOne({ email });
 
-  if (!user) {
-    throw new ApiError(404, "This email is not registered");
+    if (!user) {
+      throw new ApiError(404, "This email is not registered");
+    }
+
+    const isPassValid = await user.isPasswordCorrect(password);
+
+    if (!isPassValid) {
+      throw new ApiError(404, "Invalid credentials");
+    }
+
+    const { accessToken, refreshToken } = await generateTokens(user._id);
+    await redis.set(`refreshToken:${user._id}`, refreshToken, {
+      ex: eval(process.env.REFRESH_TOKEN_EXPIRY),
+    });
+
+    return res
+      .status(200)
+      .cookie("accessToken", accessToken, options)
+      .cookie("refreshToken", refreshToken, options)
+      .json(new ApiResponse(200, { user }, "Login successful!"));
+  } catch (err) {
+    throw new ApiError(500, err?.message || "Try logging in a moment again");
   }
-
-  const isPassValid = await user.isPasswordCorrect(password);
-
-  if (!isPassValid) {
-    throw new ApiError(404, "Invalid credentials");
-  }
-
-  const { accessToken, refreshToken } = await generateTokens(user._id);
-  await redis.set(`refreshToken:${user._id}`, refreshToken, {
-    ex: eval(process.env.REFRESH_TOKEN_EXPIRY),
-  });
-
-  return res
-    .status(200)
-    .cookie("accessToken", accessToken, options)
-    .cookie("refreshToken", refreshToken, options)
-    .json(new ApiResponse(200, { user }, "Login successful!"));
 });
 
 export const logout = asyncHandler(async (req, res) => {
