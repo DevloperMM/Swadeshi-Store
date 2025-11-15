@@ -2,7 +2,7 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
-import redis from "../lib/redis.js";
+import client from "../lib/redis.js";
 import jwt from "jsonwebtoken";
 
 const options = {
@@ -47,8 +47,8 @@ export const signup = asyncHandler(async (req, res) => {
     }
 
     const { accessToken, refreshToken } = await generateTokens(user._id);
-    await redis.set(`refreshToken:${user._id}`, refreshToken, {
-      ex: eval(process.env.REFRESH_TOKEN_EXPIRY),
+    await client.set(`refreshToken:${user._id}`, refreshToken, {
+      EX: Number(process.env.REFRESH_TOKEN_EXPIRY),
     });
 
     return res
@@ -78,8 +78,8 @@ export const login = asyncHandler(async (req, res) => {
     }
 
     const { accessToken, refreshToken } = await generateTokens(user._id);
-    await redis.set(`refreshToken:${user._id}`, refreshToken, {
-      ex: eval(process.env.REFRESH_TOKEN_EXPIRY),
+    await client.set(`refreshToken:${user._id}`, refreshToken, {
+      EX: Number(process.env.REFRESH_TOKEN_EXPIRY),
     });
 
     return res
@@ -100,7 +100,7 @@ export const logout = asyncHandler(async (req, res) => {
         refreshToken,
         process.env.REFRESH_TOKEN_SECRET
       );
-      await redis.del(`refreshToken:${decoded._id}`);
+      await client.del(`refreshToken:${decoded._id}`);
     }
 
     return res
@@ -130,7 +130,7 @@ export const refreshAccessToken = asyncHandler(async (req, res) => {
       process.env.REFRESH_TOKEN_SECRET
     );
 
-    const userRefToken = await redis.get(`refreshToken:${decodedToken?._id}`);
+    const userRefToken = await client.get(`refreshToken:${decodedToken?._id}`);
 
     if (incomingRefreshToken !== userRefToken) {
       throw new ApiError(400, "Refresh token has expired");

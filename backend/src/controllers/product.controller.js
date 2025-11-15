@@ -2,7 +2,7 @@ import { Product } from "../models/product.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
-import redis from "../lib/redis.js";
+import client from "../lib/redis.js";
 import { uploadOnCloudinary, deleteFromCloudinary } from "../lib/cloudinary.js";
 import mongoose from "mongoose";
 
@@ -24,8 +24,9 @@ export const getAllProducts = asyncHandler(async (req, res) => {
 
 export const getFeaturedProducts = asyncHandler(async (req, res) => {
   try {
-    let featuredProducts = await redis.get("featured_products");
+    let featuredProducts = await client.get("featured_products");
     if (featuredProducts) {
+      featuredProducts = JSON.parse(featuredProducts);
       return res
         .status(200)
         .json(
@@ -42,8 +43,8 @@ export const getFeaturedProducts = asyncHandler(async (req, res) => {
       throw new ApiError(404, "No featured products found");
     }
 
-    await redis.set("featured_products", JSON.stringify(featuredProducts), {
-      ex: 1800,
+    await client.set("featured_products", JSON.stringify(featuredProducts), {
+      EX: 1800,
     });
 
     return res
@@ -141,8 +142,8 @@ export const toggleFeatured = asyncHandler(async (req, res) => {
     );
 
     const featuredProducts = await Product.find({ isFeatured: true }).lean();
-    await redis.set("featured_products", JSON.stringify(featuredProducts), {
-      ex: 1800,
+    await client.set("featured_products", JSON.stringify(featuredProducts), {
+      EX: 1800,
     });
 
     return res

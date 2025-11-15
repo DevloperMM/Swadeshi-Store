@@ -14,7 +14,7 @@ async function createNewCoupon(userId) {
   const newCoupon = await Coupon.create({
     code: `GIFT${Math.random().toString(36).substring(2, 8).toUpperCase()}`,
     discount: 10,
-    expiryDate: new Date(Date.now() + eval(process.env.COUPON_EXPIRY)),
+    expiryDate: new Date(Date.now() + process.env.COUPON_EXPIRY),
     userId: userId,
   });
 
